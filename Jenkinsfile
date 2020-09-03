@@ -66,7 +66,7 @@ pipeline {
                 reportName: 'ZAP DAST Report', 
                 reportTitles: ''
             ])
-            (dependencyCheckPublisher pattern: '')
+            dependencyCheckPublisher pattern: ''
         }
     }
 }
