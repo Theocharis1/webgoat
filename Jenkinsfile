@@ -23,7 +23,7 @@ pipeline {
             }
         }
         
-    stage('Import context file') {
+    stage('Import context file to ZAP') {
             steps {
                 script {
                     try {
@@ -36,7 +36,7 @@ pipeline {
             }
         }
 
-        stage('Scan') {
+        stage('Scan staging environment with ZAP') {
             steps {
                 script {
                     try {
@@ -49,10 +49,23 @@ pipeline {
             }
         }
         
-        stage('Generate Report') {
+        stage('Generate ZAP Report') {
             steps {
                 sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 report -o zap_report.html -f html'
             }
         }    
+    }
+    post{
+        always{
+            publishHTML([
+                allowMissing: false, 
+                alwaysLinkToLastBuild: false, 
+                keepAll: false, 
+                reportDir: '', 
+                reportFiles: 'zap_report.html', 
+                reportName: 'ZAP DAST Report', 
+                reportTitles: ''
+            ])
+        }
     }
 }
