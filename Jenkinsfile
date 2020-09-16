@@ -68,7 +68,7 @@ pipeline {
             ])
             dependencyCheckPublisher pattern: ''
             script{
-                time=$(date +'%Y-%m-%d')
+                def timeStamp = Calendar.getInstance().getTime().format('YYYYMMdd-hhmmss',TimeZone.getTimeZone('CST'))
             }
         }
     }
