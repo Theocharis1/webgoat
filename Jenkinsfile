@@ -68,7 +68,6 @@ pipeline {
             ])
             dependencyCheckPublisher pattern: ''
             
-            time=$(date +'%Y-%m-%d')
         }
     }
 }
