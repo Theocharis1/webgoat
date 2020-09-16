@@ -67,7 +67,9 @@ pipeline {
                 reportTitles: ''
             ])
             dependencyCheckPublisher pattern: ''
-            
+            steps{
+                time=$(date +'%Y-%m-%d')
+            }
         }
     }
 }
