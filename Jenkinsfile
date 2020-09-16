@@ -15,10 +15,7 @@ pipeline {
     }
     post{
         always{
-            dependencyCheckPublisher pattern: ''
-            script{
-                
-            }  
+            dependencyCheckPublisher pattern: '' 
         }  
     }
 }
