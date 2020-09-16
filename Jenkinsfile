@@ -17,11 +17,6 @@ pipeline {
                 sh "mvn sonar:sonar -Dsonar.host.url=${"http://sonarqube:9000"}"
             }
         }
-        stage('Dependency-Check') {
-            steps {
-                dependencyCheck additionalArguments: '-format HTML', odcInstallation: 'Dependency-Check-5.3.2'
-            }
-        }
         
     stage('Import context file to ZAP') {
             steps {
