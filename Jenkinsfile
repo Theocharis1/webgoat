@@ -35,37 +35,9 @@ pipeline {
                  }
             }
         }
-
-        stage('Scan staging environment with ZAP') {
-            steps {
-                script {
-                    try {
-                        // If it finds results, returns error code, but we still want to publish the report
-                        sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 quick-scan -c WebGoat -u tester -s all --spider -r http://webgoat:8085/WebGoat'
-                        }
-                    catch (Exception e) {
-                    }
-                 }
-            }
-        }
-        
-        stage('Generate ZAP Report') {
-            steps {
-                sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 report -o zap_report_xml.xml -f xml'
-            }
-        }    
     }
     post{
         always{
-            publishHTML([
-                allowMissing: false, 
-                alwaysLinkToLastBuild: false, 
-                keepAll: false, 
-                reportDir: '', 
-                reportFiles: 'zap_report.html', 
-                reportName: 'ZAP DAST Report', 
-                reportTitles: ''
-            ])
             dependencyCheckPublisher pattern: ''
             script{
                 def timeStamp = Calendar.getInstance().getTime().format('YYYYMMdd-hhmmss',TimeZone.getTimeZone('CST'))
