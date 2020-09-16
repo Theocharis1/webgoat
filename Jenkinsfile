@@ -51,7 +51,7 @@ pipeline {
         
         stage('Generate ZAP Report') {
             steps {
-                sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 report -o zap_report.html -f html'
+                sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 report -o zap_report.html -f html report -o zap_report_xml.xml -f xml'
             }
         }    
     }
