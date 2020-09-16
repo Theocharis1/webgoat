@@ -68,7 +68,9 @@ pipeline {
             ])
             dependencyCheckPublisher pattern: ''
             steps{
-                time=$(date +'%Y-%m-%d')
+                script{
+                    time=$(date +'%Y-%m-%d')
+                }
             }
         }
     }
