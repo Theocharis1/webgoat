@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DefectDojo_API_KEY = credentials(DefectDojo_API_KEY)
+        DefectDojo_API_KEY = credentials('DefectDojo_API_KEY')
     }
     tools {
         maven 'maven3'
