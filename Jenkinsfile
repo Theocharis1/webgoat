@@ -41,6 +41,7 @@ pipeline {
                 script {
                     try {
                         // If it finds results, returns error code, but we still want to publish the report
+                        //TODO: Jenkins credentials for ZAP api key and WebGoat user password (context)
                         sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 quick-scan -c WebGoat -u tester -s all --spider -r http://webgoat:8085/WebGoat'
                         }
                     catch (Exception e) {
@@ -51,10 +52,12 @@ pipeline {
         
         stage('Generate ZAP Report') {
             steps {
+                //TODO: Jenkins credentials for ZAP api key
                 sh 'zap-cli --zap-url zap -p 8000 --api-key 5364864132243598723485 report -o zap_report_xml.xml -f xml'
             }
         }    
     }
+
     post{
         always{
             publishHTML([
@@ -68,11 +71,19 @@ pipeline {
             ])
             dependencyCheckPublisher pattern: ''
             
+            //Publish DAST results to DefectDojo
             script{
+
+                //Get date via shell in order to pull through script approval
                 final String currentTime = sh(returnStdout: true, script: 'date +%Y-%m-%d').trim()
+
+                //POST request to DefectDojo API in order to upload the ZAP scan (do not remove triple quotes)
+                //TODO: Jenkins credentials for DefectDojo API key
                 sh """curl -X POST "http://nginx:8080/api/v2/import-scan/" -H "Authorization: Token 83f05a8624a7b22cb9bd0e5becb85b82d5e6cee2" -F "engagement=9" -F "verified=true" -F "active=true" -F "scan_date=$currentTime" -F "scan_type=ZAP Scan" -F "minimum_severity=Info" -F "skip_duplicates=true" -F "close_old_findings=false" -F "file=@zap_report_xml.xml" """
             }
-            
+            //Publish SCA results to DefectDojo
+            script{
+                sh """curl -X POST "http://nginx:8080/api/v2/import-scan/" -H "Authorization: Token 83f05a8624a7b22cb9bd0e5becb85b82d5e6cee2" -F "engagement=9" -F "verified=true" -F "active=true" -F "scan_date=$currentTime" -F "scan_type=curl -X POST "http://localhost:8080/api/v2/import-scan/" -H "accept: application/json" -H "Authorization: Token 83f05a8624a7b22cb9bd0e5becb85b82d5e6cee2" -H "Content-Type: multipart/form-data" -H "X-CSRFToken: NbStE7xjavKPmjyiz5JdMOUPzDpduOfZOtv7YWefja6wOn5YFW6SAz46hyG8fVEC" -d {"scan_date":"2020-09-16","minimum_severity":"Info","active":"true","verified":"true","scan_type":"Dependency Check Scan","engagement":"9","close_old_findings":"false","push_to_jira":"false"}" -F "minimum_severity=Info" -F "skip_duplicates=true" -F "close_old_findings=false" -F "file=@dependency-check-report.xml" """
         }
     }
 }
